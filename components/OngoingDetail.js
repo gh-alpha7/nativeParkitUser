@@ -8,6 +8,7 @@ import CardSection from './common/CardSection';
 import Input from './common/Input';
 import LinearGradient from 'react-native-linear-gradient';
 import FinalQrCode from './FinalQrCode'
+import RNUpiPayment from 'react-native-upi-payment'
 
 export default class LoginForm extends Component {
 
@@ -40,7 +41,7 @@ export default class LoginForm extends Component {
 
     return (
             <LinearGradient   colors={['#007aff', '#2471A3']} style={{flex:1,justifyContent:'space-between'}}>
-            
+
               <View style={{marginTop:40,height:100,justifyContent:"space-between",alignItems:"center"}}>
                 <View style={{alignItems:"center"}}>
                   <Text style={{fontSize:30,color:"#fff"}}>{"Ongoing Booking Details "}</Text>

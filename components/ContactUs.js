@@ -10,13 +10,12 @@ export default class Profile extends Component {
   state={
     uri:'https://bootdey.com/img/Content/avatar/avatar6.png'
   }
-  componentDidMount(){
-    Linking.openURL("mailto:shubhamsngh067@gmail.com");
-    this.props.navigation.navigate('Home')
-  }
+
 
 
   render() {
+    this.props.navigation.navigate('DrawerNavigator')
+    Linking.openURL("mailto:shubhamsngh067@gmail.com");
     return (
       <View style={{marginTop:30}}></View>
     );

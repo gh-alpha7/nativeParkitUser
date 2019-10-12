@@ -3,7 +3,7 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
+  Image, ToastAndroid,
   TouchableOpacity, TextInput,  ScrollView, Keyboard, Dimensions, Picker
 } from 'react-native';
 import CardSection from './common/CardSection';
@@ -11,11 +11,27 @@ import OtpButton from './common/OtpButton';
 import DatePick from './common/DatePickProfile';
 import LinearGradient from 'react-native-linear-gradient';
 import ImagePicker from 'react-native-image-picker';
+import db from './firebaseConfig'
 
 const {height: windowHeight} = Dimensions.get('window')
 export default class Profile extends Component {
   state={
-    uri:'https://bootdey.com/img/Content/avatar/avatar6.png',height:windowHeight
+    profile:'https://bootdey.com/img/Content/avatar/avatar6.png',height:windowHeight
+  }
+  saveProfile=()=>{
+    let data={...this.state}
+    Object.keys(data).map(k=>{
+      if(!data[k]) delete data[k]
+    })
+    delete data['height']
+    db.collection('users').doc(global.user.uid).update(data).then((d)=>{
+      ToastAndroid.show('Update Successful', ToastAndroid.SHORT);
+
+    })
+    .catch(err=>{
+      ToastAndroid.show('Update failed', ToastAndroid.SHORT);
+
+    })
   }
 
   _pickImage = async () => {
@@ -34,7 +50,7 @@ export default class Profile extends Component {
       } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
-        this.setState({ uri: `data:${response.type};base64,${response.data}`)
+        this.setState({ profile: `data:${response.type};base64,${response.data}`})
 
       }
     });
@@ -48,6 +64,23 @@ export default class Profile extends Component {
       'keyboardDidHide',
       this._keyboardDidHide,
     );
+    db.collection("users").where("phn_number", "==", global.user.phn_number).get().then((querySnapshot) => {
+        if(querySnapshot.size==1)
+        querySnapshot.forEach(doc=>{
+          let d=doc.data()
+          console.log("*****************profile",d);
+          this.setState({
+            name:d.name,
+            sex:d.sex,
+            date:d.date,
+            email:d.email,
+            location:d.location,
+            profile:d.profile || this.state.profile
+          })
+        })
+    })
+
+
   }
 
   componentWillUnmount() {
@@ -71,7 +104,7 @@ export default class Profile extends Component {
         colors={['#007aff', '#2471A3']}
         style={styles.header}/>
 
-        <Image style={styles.avatar} source={{uri: this.state.uri}}/>
+        <Image style={styles.avatar} source={{uri: this.state.profile}}/>
         <TouchableOpacity style={styles.TouchableOpacity} onPress={()=>{this._pickImage()}}>
           <Image style={styles.picker} source={require("../assets/images/picker.png")}/>
         </TouchableOpacity>
@@ -85,9 +118,9 @@ export default class Profile extends Component {
             <View>
               <Text style={styles.info}>GENDER</Text>
               <Picker
-                selectedValue={this.state.language}
+                selectedValue={this.state.sex}
                 onValueChange={(itemValue, itemIndex) =>
-                  this.setState({language: itemValue})
+                  this.setState({sex: itemValue})
                 }>
                 <Picker.Item label="Male" value="Male" />
                 <Picker.Item label="Female" value="Female" />
@@ -117,7 +150,7 @@ export default class Profile extends Component {
           </View>
           <View style={{flex:1,justifyContent:'flex-end'}}>
           <CardSection >
-            <OtpButton >
+            <OtpButton onPress={this.saveProfile}>
               SAVE
             </OtpButton>
             </CardSection>

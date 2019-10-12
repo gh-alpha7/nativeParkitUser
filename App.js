@@ -14,6 +14,7 @@ import OngoingDetails from './components/OngoingDetail'
 import CompletedDetails from './components/CompletedDetails'
 import FinalQrCode from './components/FinalQrCode'
 import AboutUs from './components/AboutUs'
+import Vehicles from './components/Vehicles'
 
 const DrawerNavigator=createDrawerNavigator({
   'Home ':{
@@ -52,24 +53,24 @@ const DrawerNavigator=createDrawerNavigator({
         )
       }
   },
-  'Contact Us ':{
-    screen:ContactUs,
-    navigationOptions: {
-        drawerIcon: ({ tintColor }) => (
-          <Image
-            source={require("./assets/images/contact.png")}
-            resizeMode="contain"
-            style={{ width: 20, height: 20, tintColor: tintColor }}
-          />
-        )
-      }
-  },
   'About Us ':{
     screen:AboutUs,
     navigationOptions: {
         drawerIcon: ({ tintColor }) => (
           <Image
             source={require("./assets/images/info.png")}
+            resizeMode="contain"
+            style={{ width: 20, height: 20, tintColor: tintColor }}
+          />
+        )
+      }
+  },
+  'Vehicles ':{
+    screen:Vehicles,
+    navigationOptions: {
+        drawerIcon: ({ tintColor }) => (
+          <Image
+            source={require("./assets/images/kyc.png")}
             resizeMode="contain"
             style={{ width: 20, height: 20, tintColor: tintColor }}
           />

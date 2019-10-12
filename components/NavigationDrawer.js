@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, SafeAreaView, ScrollView, Dimensions, Image, TouchableOpacity, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, ScrollView, Dimensions, Image, TouchableOpacity, AsyncStorage, ToastAndroid,Linking, Button } from 'react-native';
 import { DrawerItems} from 'react-navigation'
 import LinearGradient from 'react-native-linear-gradient';
 import RNRestart from 'react-native-restart';
@@ -25,7 +25,12 @@ const CustomDrawerComponent = (props)=>(
     </View>
     </LinearGradient>
     <ScrollView>
-      <DrawerItems {...props} />
+      <DrawerItems {...props}
+      />
+      <Button title="Contact Us" onPress={()=>{
+        Linking.openURL("mailto:shubhamsngh067@gmail.com");
+
+      }}/>
     </ScrollView>
   </View>
 )

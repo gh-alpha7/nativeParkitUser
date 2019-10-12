@@ -22,8 +22,8 @@ export default class Payment extends Component {
       return
     }
     RNUpiPayment.initializePayment({
-      vpa: 'surbhiranjan2.sr@okhdfcbank', // anupamk121@dbs
-      payeeName: 'Surbhi Ranjan',
+      vpa: 'anupamk121@dbs', // anupamk121@dbs
+      payeeName: 'Anupam Kumar',
       amount:this.props.buttonName,
       transactionRef: 'aasf-332-aoei-fn'
     }, this.Callback, this.Callback);

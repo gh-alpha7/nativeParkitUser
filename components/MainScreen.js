@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import {
   Text,
   View,
-  StyleSheet, TouchableWithoutFeedback, StatusBar,
-  Button, TextInput, Image, TouchableOpacity, Dimensions, Modal, Linking, BackHandler, PermissionsAndroid, ToastAndroid
+  StyleSheet, TouchableWithoutFeedback, StatusBar, Platform,
+   TextInput, Image, TouchableOpacity, Dimensions, Modal, Linking, BackHandler, PermissionsAndroid, ToastAndroid
 } from 'react-native';
 import RBSheet from "react-native-raw-bottom-sheet";
 import PlaceDetails from './MainScreen/PlaceDetails'
@@ -20,6 +20,7 @@ import Db from './firebaseConfig'
 import FirestoreData from './FirestoreData'
 import { StackActions, NavigationActions } from 'react-navigation';
 import RNUpiPayment from 'react-native-upi-payment'
+import Button from './common/Button';
 
 
 const {width: windowWidth} = Dimensions.get('window')
@@ -110,6 +111,20 @@ class MainScreen extends Component {
 
     this.setState({mapRegion: { latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.0922, longitudeDelta: 0.0421 }})
 
+  }
+  navigate=()=>{
+    let {Lat,Lon}= {...this.state.selectedLoc}
+    const scheme = Platform.select({ ios: 'maps:0,0?q=', android: 'geo:0,0?q=' });
+    const latLng = `${Lat},${Lon}`;
+    const label = 'Label';
+    console.log(Lat,Lon,latLng);
+    const url = Platform.select({
+      ios: `${scheme}${label}@${latLng}`,
+      android: `${scheme}${latLng}(${label})`
+    });
+
+
+    Linking.openURL(url);
   }
   navMenu=()=>{
     this.props.navigation.openDrawer()
@@ -204,11 +219,15 @@ renderHeader = () => (
         </View>
         <Image source={require("../assets/images/Park.png")} style={{borderRadius:5,height:90,width:90}}/>
       </View>
-      <CardSection>
-        <OtpButton onPress={this.paymentVisible}>
+      <View style={{flexDirection:'row',marginLeft:10,marginRight:10}}>
+        <Button onPress={this.paymentVisible}>
           BOOK
-        </OtpButton>
-      </CardSection>
+        </Button>
+
+        <Button onPress={this.navigate}>
+          NAVIGATE
+        </Button>
+      </View>
     </View>
   </View>
 )
@@ -220,7 +239,7 @@ paymentVisible=()=>{
     console.log(this.state.currLoc);
     return (
     <View style={styles.container}>
-      <StatusBar barStyle='light-content' />
+      <StatusBar backgroundColor='rgba(255,255,255,0)'  barStyle='dark-content' />
       <LocationSearch changeLocation={this.changeLocation} qrModal={this.modalVisible} navMenu={this.navMenu}/>
       <Map style={styles.map} mapRegion={this.state.mapRegion} rbSheetClick={this.rbSheetClick} location={{latitude: 23.99,
           longitude: 85.3}} points={this.state.points} _onRegionChangeComplete={this._onRegionChangeComplete}/>

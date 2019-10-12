@@ -3,18 +3,19 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
+  Image, ToastAndroid,
   TouchableOpacity, TextInput,  KeyboardAvoidingView
 } from 'react-native';
 import ImagePicker from 'react-native-image-picker';
+import db from './firebaseConfig'
 
 // import { LinearGradient, ImagePicker, Permissions, Constants } from 'expo';
 
 export default class Profile extends Component {
   state={
-    uri1:require("../assets/images/card.png"),
-    uri2:require("../assets/images/card.png"),
-    uri3:require("../assets/images/card.png")
+    frontDl:require("../assets/images/card.png"),
+    backDl:require("../assets/images/card.png"),
+    vehicleDoc:require("../assets/images/card.png")
   }
   // getPermissionAsync = async () => {
   //   if (Constants.platform.ios) {
@@ -24,6 +25,20 @@ export default class Profile extends Component {
   //     }
   //   }
   // }
+  componentDidMount(){
+    db.collection("users").where("phn_number", "==", global.user.phn_number).get().then((querySnapshot) => {
+        if(querySnapshot.size==1)
+        querySnapshot.forEach(doc=>{
+          let d=doc.data()
+          console.log("*****************profile",d);
+          this.setState(prevState=>({
+            frontDl:d.frontDl?{uri:d.frontDl} : prevState.frontDl,
+            backDl:d.backDl?{uri:d.backDl} : prevState.backDl,
+            vehicleDoc:d.vehicleDoc?{uri:d.vehicleDoc} : prevState.vehicleDoc,
+          }))
+        })
+    })
+  }
   _pickImage = async (uri) => {
     // await this.getPermissionAsync()
     // let result = await ImagePicker.launchImageLibraryAsync({
@@ -52,7 +67,15 @@ export default class Profile extends Component {
       } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
-        this.setState({ [uri]: {uri:response.uri} })
+        this.setState({ [uri]: {uri:`data:${response.type};base64,${response.data}`} })
+        db.collection('users').doc(global.user.uid).update({[uri]:`data:${response.type};base64,${response.data}`}).then((d)=>{
+          ToastAndroid.show('Update Successful', ToastAndroid.SHORT);
+
+        })
+        .catch(err=>{
+          ToastAndroid.show('Update failed', ToastAndroid.SHORT);
+
+        })
 
       }
     });
@@ -61,9 +84,9 @@ export default class Profile extends Component {
     return (
       <View style={{marginTop:30}}>
         <Text style={{fontSize:20,marginLeft:20}}>KYC Documents</Text>
-        <TouchableOpacity  onPress={()=>{this._pickImage('uri1')}}>
+        <TouchableOpacity  onPress={()=>{this._pickImage('frontDl')}}>
         <View style={{margin:20,padding:20,borderRadius:5,borderWidth:1,flexDirection:'row',borderColor:'#ABB2B9'}}>
-          <Image style={styles.avatar} source={this.state.uri1}/>
+          <Image style={styles.avatar} source={this.state.frontDl}/>
           <View style={{marginLeft:30,justifyContent:'space-around'}}>
             <Text style={{fontSize:16}}>Upload front side of DL</Text>
             <View style={{flexDirection:'row'}}>
@@ -73,9 +96,9 @@ export default class Profile extends Component {
           </View>
         </View>
         </TouchableOpacity>
-        <TouchableOpacity  onPress={()=>{this._pickImage('uri2')}}>
+        <TouchableOpacity  onPress={()=>{this._pickImage('backDl')}}>
         <View style={{margin:20,padding:20,borderRadius:5,borderWidth:1,flexDirection:'row',borderColor:'#ABB2B9'}}>
-          <Image style={styles.avatar} source={this.state.uri2}/>
+          <Image style={styles.avatar} source={this.state.backDl}/>
           <View style={{marginLeft:30,justifyContent:'space-around'}}>
             <Text style={{fontSize:16}}>Upload back side of DL</Text>
             <View style={{flexDirection:'row'}}>
@@ -85,9 +108,9 @@ export default class Profile extends Component {
           </View>
         </View>
         </TouchableOpacity>
-        <TouchableOpacity  onPress={()=>{this._pickImage('uri3')}}>
+        <TouchableOpacity  onPress={()=>{this._pickImage('vehicleDoc')}}>
         <View style={{margin:20,padding:20,borderRadius:5,borderWidth:1,flexDirection:'row',borderColor:'#ABB2B9'}}>
-          <Image style={styles.avatar} source={this.state.uri3}/>
+          <Image style={styles.avatar} source={this.state.vehicleDoc}/>
           <View style={{marginLeft:30,justifyContent:'space-around'}}>
             <Text style={{fontSize:16}}>Upload vehicle registration documents</Text>
             <View style={{flexDirection:'row'}}>

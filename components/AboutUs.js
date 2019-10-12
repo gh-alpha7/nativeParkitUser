@@ -15,7 +15,6 @@ export default class AboutUs extends Component {
 
     return (
             <LinearGradient   colors={['#007aff', '#2471A3']} style={{flex:1,justifyContent:'space-between'}}>
-            <StatusBar backgroundColor="#007aff" barStyle="light-content" />
 
               <View style={{marginTop:40,height:100,justifyContent:"space-between",alignItems:"center"}}>
                 <View style={{alignItems:"center"}}>
